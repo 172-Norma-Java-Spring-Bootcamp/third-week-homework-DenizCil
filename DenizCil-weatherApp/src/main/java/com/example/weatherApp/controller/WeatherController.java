@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
+
 @RestController
 @RequestMapping(path = "api/v1.0")
 public class WeatherController {
@@ -22,12 +24,11 @@ public class WeatherController {
         return weatherApiService.getCurrentWeather(cityName);
     }
 
-
-
     @GetMapping(path = "/forecast/weather/{cityname}/{days}")
     public ForecastWeatherApi getCurrentWeather(@PathVariable(name = "cityname") String cityName,
-                                                @PathVariable(name="days") int day){
+                                                @PathVariable(name="days") @Min(0) int day) {
+        if(day<0){
+            throw new RuntimeException("The day cannot be less than zero (0).");
+        }
         return weatherApiService.getForecastWeather(cityName,day);
     }
-
-}
